@@ -200,6 +200,124 @@
 
     </style>
 </head>
+    <script>
+  const subjectList = document.getElementById("subjectList");
+  const subjectSelect = document.getElementById("subjectSelect");
+  const calendarContainer = document.getElementById("calendarContainer");
+  const monthYear = document.getElementById("monthYear");
+  const calendar = document.getElementById("calendar");
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
+
+  let subjects = JSON.parse(localStorage.getItem("subjects")) || [];
+  let attendance = JSON.parse(localStorage.getItem("attendance")) || {};
+
+  function saveToLocalStorage() {
+    localStorage.setItem("subjects", JSON.stringify(subjects));
+    localStorage.setItem("attendance", JSON.stringify(attendance));
+  }
+
+  function renderSubjects() {
+    subjectList.innerHTML = "";
+    subjectSelect.innerHTML = `<option value="">--Select--</option>`;
+    subjects.forEach(subject => {
+      const li = document.createElement("li");
+      li.innerHTML = `${subject} <button onclick="deleteSubject('${subject}')">Delete</button>`;
+      subjectList.appendChild(li);
+
+      const option = document.createElement("option");
+      option.value = subject;
+      option.textContent = subject;
+      subjectSelect.appendChild(option);
+    });
+  }
+
+  function deleteSubject(name) {
+    if (!confirm(`Delete subject "${name}"?`)) return;
+    subjects = subjects.filter(s => s !== name);
+    delete attendance[name];
+    saveToLocalStorage();
+    renderSubjects();
+    calendarContainer.classList.add("hidden");
+  }
+
+  document.getElementById("addSubjectBtn").addEventListener("click", () => {
+    const name = document.getElementById("newSubject").value.trim();
+    if (name && !subjects.includes(name)) {
+      subjects.push(name);
+      attendance[name] = {};
+      saveToLocalStorage();
+      renderSubjects();
+      document.getElementById("newSubject").value = "";
+    }
+  });
+
+  document.getElementById("showAttendanceBtn").addEventListener("click", () => {
+    const subject = subjectSelect.value;
+    if (subject) {
+      calendarContainer.classList.remove("hidden");
+      renderCalendar(subject);
+    }
+  });
+
+  document.getElementById("prevMonth").addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(subjectSelect.value);
+  });
+
+  document.getElementById("nextMonth").addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(subjectSelect.value);
+  });
+
+  function renderCalendar(subject) {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+    monthYear.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    calendar.innerHTML = "";
+
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    // Render empty cells for first row
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement("div");
+      calendar.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement("div");
+      const dateKey = `${currentYear}-${currentMonth + 1}-${day}`;
+      const status = attendance[subject][dateKey] || "None";
+
+      cell.textContent = day;
+      cell.className = status.toLowerCase();
+
+      cell.addEventListener("click", () => {
+        const newStatus = prompt("Mark attendance (present/absent/holiday/none):", status.toLowerCase());
+        if (["present", "absent", "holiday", "none"].includes(newStatus)) {
+          attendance[subject][dateKey] = newStatus === "none" ? undefined : newStatus;
+          saveToLocalStorage();
+          renderCalendar(subject);
+        }
+      });
+
+      calendar.appendChild(cell);
+    }
+  }
+
+  // Initialize app
+  renderSubjects();
+</script>
+
 <body>
     <div class="app-container">
         <!-- Removed Auth Section -->
