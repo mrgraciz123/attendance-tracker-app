@@ -1,203 +1,1382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance Tracker ✨</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional Attendance Dashboard 🚀</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@300;400;600;700&display=swap">
   <style>
-    body {
+    :root {
+      --bg-light: linear-gradient(135deg, #e0f7fa, #fff9c4);
+      --bg-dark: #1a1a2e;
+      --text-light: #333;
+      --text-dark: #e0e0e0;
+      --card-bg-light: #ffffff;
+      --card-bg-dark: #2c2c4d;
+      --border-light: #26c6da;
+      --border-dark: #90caf9;
+      --button-primary-light: #26c6da;
+      --button-primary-dark: #90caf9;
+      --button-hover-light: #00acc1;
+      --button-hover-dark: #64b5f6;
+      --button-danger: #ef5350;
+      --button-danger-hover: #d32f2f;
+      --button-success: #66bb6a;
+      --button-success-hover: #43a047;
+      --shadow-light: 0 10px 25px rgba(0,0,0,0.1);
+      --shadow-dark: 0 10px 25px rgba(0,0,0,0.3);
+      --input-bg-light: #f5f5f5;
+      --input-bg-dark: #3a3a5e;
+      --input-border-light: #ccc;
+      --input-border-dark: #555;
+    }
+
+    * {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f72585, #7209b7);
-      color: #fff;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: var(--bg-light);
+      color: var(--text-light);
+      padding: 20px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
-      padding: 2rem;
-      min-height: 100vh;
-      overflow-x: hidden;
       transition: background 0.3s ease, color 0.3s ease;
     }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      text-align: center;
-    }
-    .quote {
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 400px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-    .meme {
-      font-size: 0.9rem;
-      margin: 1rem 0;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 400px;
-      text-align: center;
-    }
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0.5rem;
-      margin: 2rem auto;
-      max-width: 500px;
-    }
-    .day {
-      padding: 1rem;
-      text-align: center;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s ease;
-      font-size: 1.2rem;
-    }
-    .day:hover {
-      background: rgba(255,255,255,0.2);
-      transform: scale(1.05);
-    }
-    .present { background-color: #06d6a0; color: #000; }
-    .absent { background-color: #ef476f; color: #fff; }
-    .holiday { background-color: #ffd166; color: #000; }
-    .banner {
-      background: rgba(0,0,0,0.2);
-      padding: 1rem;
-      border-radius: 12px;
-      margin: 1rem 0;
-      max-width: 500px;
-      text-align: center;
-      font-size: 1.1rem;
-    }
-    .badge {
-      background: #ff006e;
-      color: #fff;
-      padding: 0.3rem 0.7rem;
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+      margin: auto;
+      background: var(--card-bg-light);
+      padding: 2rem;
       border-radius: 1rem;
-      font-size: 0.9rem;
-      margin: 0.3rem;
-      display: inline-block;
+      box-shadow: var(--shadow-light);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
     }
-    .footer {
-      margin-top: auto;
-      font-size: 0.9rem;
-      color: #ddd;
+
+    h1, h2 {
+      font-size: 2.5rem;
       text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      color: var(--text-light); /* Will be overridden by dark-mode */
+      transition: color 0.3s ease;
     }
-    .controls {
-      margin-top: 1rem;
+    h2 {
+      font-size: 2rem;
+    }
+
+    /* Page Sections */
+    .page-section {
+      display: none; /* Hidden by default, shown by JS */
+    }
+    .page-section.active {
+      display: block;
+    }
+
+    /* Login/Register Page */
+    .auth-container {
+      max-width: 450px;
+      margin: 50px auto;
+      padding: 2.5rem;
+      background: var(--card-bg-light);
+      border-radius: 1rem;
+      box-shadow: var(--shadow-light);
+      text-align: center;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .auth-container h2 {
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+      color: var(--text-light);
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--input-border-light);
+      border-radius: 8px;
+      background-color: var(--input-bg-light);
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+    .auth-form input:focus {
+      outline: none;
+      border-color: var(--button-primary-light);
+      box-shadow: 0 0 0 2px rgba(38, 198, 218, 0.2);
+    }
+    .auth-form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 1.5rem;
+    }
+    .auth-form-actions button {
+        flex: 1;
+        padding: 0.9rem;
+    }
+
+    /* Header */
+    .dashboard-header {
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      transition: border-color 0.3s ease;
     }
-    .btn {
-      background: #fff;
-      color: #7209b7;
-      padding: 0.5rem 1rem;
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+      border: 3px solid var(--button-primary-light);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .user-info span {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-light);
+      transition: color 0.3s ease;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Subject Row (Card) */
+    .subject-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      background-color: var(--card-bg-light);
+      border: 2px solid var(--border-light);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+      position: relative; /* For the edit input position */
+      flex-wrap: wrap; /* Allow content to wrap */
+      gap: 10px; /* Gap between elements inside card */
+    }
+    .subject-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+    .subject-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-grow: 1; /* Allows name and percentage to take space */
+    }
+    .subject-card span.subject-name-display {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-light);
+      transition: color 0.3s ease;
+      text-align: left;
+    }
+    .subject-card .attendance-percentage {
+        font-size: 0.9em;
+        color: #777;
+        margin-top: 2px;
+        transition: color 0.3s ease;
+    }
+    body.dark-mode .subject-card .attendance-percentage {
+        color: #b0bec5;
+    }
+    .subject-card .edit-subject-input {
+        padding: 0.5rem;
+        border: 1px solid var(--input-border-light);
+        border-radius: 5px;
+        background-color: var(--input-bg-light);
+        color: var(--text-light);
+        font-size: 1.1rem;
+        transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        margin-right: 10px; /* Space between input and buttons */
+        width: 100%; /* Take full width on smaller screens, or fit content on larger */
+        max-width: 250px; /* Limit input width */
+    }
+    .subject-card .actions {
+      display: flex;
+      gap: 10px; /* Space between buttons */
+      flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+      justify-content: flex-end; /* Align to the right */
+    }
+    .subject-card .actions button {
+      padding: 0.5rem 1rem; /* Slightly smaller buttons for cards */
+      font-size: 0.9rem;
+    }
+    button.success {
+        background: var(--button-success);
+    }
+    button.success:hover {
+        background: var(--button-success-hover);
+    }
+
+
+    /* Subject Management Section */
+    .subject-manage-section, .overall-attendance-summary, .daily-diary-section {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+        text-align: center;
+        transition: border-color 0.3s ease;
+    }
+    .subject-manage-section h3, .overall-attendance-summary h3, .daily-diary-section h3 {
+        font-size: 1.5rem;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+    .add-subject-controls {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        max-width: 500px;
+    }
+    .add-subject-controls input {
+        flex-grow: 1;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--input-border-light);
+        border-radius: 8px;
+        background-color: var(--input-bg-light);
+        color: var(--text-light);
+        font-size: 1rem;
+        transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+    .overall-attendance-summary p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: var(--text-light);
+        transition: color 0.3s ease;
+    }
+    .overall-attendance-summary p strong {
+        color: var(--button-primary-light);
+        transition: color 0.3s ease;
+    }
+    body.dark-mode .overall-attendance-summary p strong {
+        color: var(--button-primary-dark);
+    }
+
+    /* Daily Diary */
+    .daily-diary-section {
+        margin-top: 3rem;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 2rem;
+    }
+    .daily-diary-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        width: 100%;
+        max-width: 600px;
+        justify-content: center;
+    }
+    .daily-diary-controls input[type="date"] {
+        padding: 0.6rem 1rem;
+        border: 1px solid var(--input-border-light);
+        border-radius: 8px;
+        background-color: var(--input-bg-light);
+        color: var(--text-light);
+        font-size: 1rem;
+        flex-grow: 0; /* Don't grow date input much */
+        transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+    .daily-diary-section textarea {
+        width: 100%;
+        max-width: 800px;
+        min-height: 150px;
+        padding: 1rem;
+        border: 1px solid var(--input-border-light);
+        border-radius: 10px;
+        background-color: var(--input-bg-light);
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.5;
+        resize: vertical; /* Allow vertical resizing */
+        margin-bottom: 15px;
+        transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+    .daily-diary-section textarea:focus {
+        outline: none;
+        border-color: var(--button-primary-light);
+        box-shadow: 0 0 0 2px rgba(38, 198, 218, 0.2);
+    }
+    .daily-diary-section button {
+        padding: 0.8rem 2rem;
+    }
+
+    /* Buttons */
+    button {
+      padding: 0.7rem 1.5rem;
+      background: var(--button-primary-light);
+      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.2s ease, transform 0.1s ease;
     }
-    .btn:hover {
-      background: #ffbe0b;
+    button:hover {
+      background: var(--button-hover-light);
+      transform: translateY(-2px);
     }
-    .dark-mode {
-      background: #121212;
-      color: #eee;
+    button:active {
+      transform: translateY(0);
     }
-    .dark-mode .day { background: rgba(255,255,255,0.05); }
-    .dark-mode .quote, .dark-mode .meme, .dark-mode .banner { background: rgba(255,255,255,0.08); }
+    button.danger {
+      background: var(--button-danger);
+    }
+    button.danger:hover {
+      background: var(--button-danger-hover);
+    }
 
-    @media(max-width: 500px) {
-      .calendar { grid-template-columns: repeat(4, 1fr); }
+    /* Chart */
+    .chart-container {
+      margin-top: 2.5rem;
+      padding: 1.5rem;
+      background: var(--card-bg-light);
+      border-radius: 1rem;
+      box-shadow: var(--shadow-light);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Quotes & Meme */
+    #fun-quote {
+      font-size: 1.3rem;
+      font-style: italic;
+      margin: 1.5rem 0;
+      text-align: center;
+      color: #607d8b; /* Stays consistent for better readability, slightly adjusts in dark mode */
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    #meme-container {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    #meme {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      max-height: 400px;
+      margin: 1rem auto;
+      border-radius: 15px;
+      box-shadow: var(--shadow-light);
+      object-fit: contain;
+      background-color: #f0f0f0; /* Placeholder background */
+      transition: box-shadow 0.3s ease;
+    }
+    #meme-loading {
+      display: none;
+      font-style: italic;
+      color: var(--text-light);
+      transition: color 0.3s ease;
+    }
+
+    /* Avatar Selection */
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 15px;
+      margin-top: 2rem;
+      justify-content: center;
+    }
+    .avatar-option {
+      cursor: pointer;
+      padding: 10px;
+      border: 3px solid transparent;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      background-color: var(--input-bg-light);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .avatar-option img {
+      width: 100%;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .avatar-option:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .avatar-option.selected {
+      border-color: var(--button-primary-light);
+      box-shadow: 0 0 0 4px rgba(38, 198, 218, 0.3), 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .avatar-selection-buttons {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .avatar-selection-buttons button {
+      margin: 0 10px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      transition: color 0.3s ease;
+    }
+    .message {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .message.error {
+        color: var(--button-danger);
+        background-color: rgba(239, 83, 80, 0.1);
+    }
+    .message.success {
+        color: var(--button-success);
+        background-color: rgba(102, 187, 106, 0.1);
+    }
+
+
+    /* Dark Mode */
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    body.dark-mode .container,
+    body.dark-mode .auth-container,
+    body.dark-mode .chart-container,
+    body.dark-mode .subject-card {
+      background: var(--card-bg-dark);
+      box-shadow: var(--shadow-dark);
+    }
+    body.dark-mode .dashboard-header,
+    body.dark-mode .subject-manage-section,
+    body.dark-mode .overall-attendance-summary,
+    body.dark-mode .daily-diary-section {
+      border-color: rgba(255,255,255,0.1);
+    }
+    body.dark-mode .subject-card {
+      border-color: var(--border-dark);
+    }
+    body.dark-mode .user-avatar {
+        border-color: var(--button-primary-dark);
+    }
+    body.dark-mode button {
+      background: var(--button-primary-dark);
+    }
+    body.dark-mode button:hover {
+      background: var(--button-hover-dark);
+    }
+    body.dark-mode button.danger {
+        background: var(--button-danger); /* keep same in dark mode */
+    }
+    body.dark-mode button.danger:hover {
+        background: var(--button-danger-hover); /* keep same in dark mode */
+    }
+    body.dark-mode button.success {
+        background: var(--button-success); /* keep same in dark mode */
+    }
+    body.dark-mode button.success:hover {
+        background: var(--button-success-hover); /* keep same in dark mode */
+    }
+    body.dark-mode .auth-form input,
+    body.dark-mode .subject-card .edit-subject-input,
+    body.dark-mode .add-subject-controls input,
+    body.dark-mode .daily-diary-controls input[type="date"],
+    body.dark-mode .daily-diary-section textarea {
+      border: 1px solid var(--input-border-dark);
+      background-color: var(--input-bg-dark);
+      color: var(--text-dark);
+    }
+    body.dark-mode .auth-form input:focus,
+    body.dark-mode .subject-card .edit-subject-input:focus,
+    body.dark-mode .add-subject-controls input:focus,
+    body.dark-mode .daily-diary-section textarea:focus {
+      border-color: var(--button-primary-dark);
+      box-shadow: 0 0 0 2px rgba(144, 202, 249, 0.2);
+    }
+    body.dark-mode .avatar-option {
+      background-color: var(--input-bg-dark);
+    }
+    body.dark-mode .avatar-option.selected {
+      border-color: var(--button-primary-dark);
+      box-shadow: 0 0 0 4px rgba(144, 202, 249, 0.3), 0 4px 10px rgba(0,0,0,0.2);
+    }
+    body.dark-mode h1,
+    body.dark-mode h2,
+    body.dark-mode .user-info span,
+    body.dark-mode .subject-card span.subject-name-display,
+    body.dark-mode .footer,
+    body.dark-mode .subject-manage-section h3,
+    body.dark-mode .overall-attendance-summary h3,
+    body.dark-mode .overall-attendance-summary p,
+    body.dark-mode .daily-diary-section h3 {
+      color: var(--text-dark);
+    }
+    body.dark-mode #fun-quote {
+        color: #b0bec5;
+    }
+    body.dark-mode #meme-loading {
+        color: var(--text-dark);
+    }
+    body.dark-mode .message.error {
+        background-color: rgba(239, 83, 80, 0.15);
+    }
+    body.dark-mode .message.success {
+        background-color: rgba(102, 187, 106, 0.15);
+    }
+
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+      .container, .auth-container {
+        padding: 1.5rem;
+        margin: 20px auto;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-actions {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .user-info span {
+        font-size: 1.2rem;
+      }
+      .subject-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+        gap: 5px;
+      }
+      .subject-card span.subject-name-display {
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+      }
+      .subject-card .edit-subject-input {
+          margin-bottom: 5px;
+          width: calc(100% - 20px); /* Adjust width to fit */
+          margin-right: 0;
+          max-width: unset; /* Override max-width */
+      }
+      .subject-card .actions {
+        width: 100%; /* Make buttons take full width below subject name */
+        justify-content: space-evenly;
+      }
+      .subject-card .actions button {
+        flex: 1 1 auto; /* Distribute buttons evenly */
+        min-width: unset; /* Override explicit min-width if any */
+      }
+      .auth-form-actions, .add-subject-controls, .daily-diary-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      .daily-diary-controls input[type="date"] {
+          width: 100%; /* Full width for date input on small screens */
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .container, .auth-container {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .subject-card .actions button {
+        width: 100%;
+        margin-right: 0;
+      }
+      .avatar-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+      .avatar-option img {
+        height: 80px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📚 Attendance Tracker</h1>
-  <div class="quote" id="dailyQuote"></div>
-  <div class="meme" id="dailyMeme"></div>
-  <div class="banner">
-    <span class="badge">Proxy King 👑</span>
-    <span class="badge">75% Warrior 🛡️</span>
-    <span class="badge">Bunk Legend 😎</span>
-  </div>
-  <div class="calendar" id="calendar"></div>
-
-  <div class="controls">
-    <button class="btn" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
-    <button class="btn" onclick="shareToStory()">📸 Share to Story</button>
-  </div>
-
-  <div class="footer">
-    <p>Made with ❤️ for Indian College Students · #AttendanceIsLife</p>
+  <!-- Login/Register Page -->
+  <div id="auth-page" class="page-section">
+    <div class="auth-container">
+      <h2>Welcome to your Dashboard!</h2>
+      <form class="auth-form" onsubmit="event.preventDefault()">
+        <input type="text" id="auth-username" placeholder="Username" required autocomplete="username">
+        <input type="password" id="auth-password" placeholder="Password" required autocomplete="current-password">
+        <div class="auth-form-actions">
+            <button type="button" onclick="handleLogin()">Login</button>
+            <button type="button" onclick="handleRegister()">Register</button>
+        </div>
+        <p class="message error" id="auth-error"></p>
+      </form>
+    </div>
   </div>
 
+  <!-- Avatar Selection Page -->
+  <div id="avatar-selection-page" class="page-section">
+    <div class="container">
+      <h2>Choose Your Avatar</h2>
+      <div class="avatar-grid" id="avatar-options">
+        <!-- Avatars will be dynamically loaded here -->
+      </div>
+      <div class="avatar-selection-buttons">
+        <button onclick="saveAvatar()">Continue to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Page -->
+  <div id="dashboard-page" class="page-section">
+    <div class="container">
+      <div class="dashboard-header">
+        <div class="user-info">
+          <img id="user-avatar-display" src="" alt="User Avatar" class="user-avatar">
+          <span id="display-username"></span>
+        </div>
+        <div class="header-actions">
+          <button onclick="toggleDarkMode()">☀️/🌙</button>
+          <button onclick="logout()" class="danger">Logout</button>
+        </div>
+      </div>
+
+      <h1>Attendance Tracker 🎓💼</h1>
+      <p id="fun-quote">"Loading inspiration..."</p>
+
+      <div class="subject-manage-section">
+        <h3>Manage Subjects</h3>
+        <div class="add-subject-controls">
+            <input type="text" id="new-subject-name" placeholder="Enter new subject name">
+            <button onclick="addSubject()">Add Subject</button>
+        </div>
+        <p class="message" id="subject-manage-message"></p>
+      </div>
+
+      <div class="subjects-list" id="subjects-list">
+        <!-- Subject cards will be dynamically loaded here by renderSubjectCards() -->
+      </div>
+
+      <div class="overall-attendance-summary" id="overall-attendance-summary">
+        <h3>Overall Attendance</h3>
+        <p>Total Classes Attended: <strong id="total-present">0</strong></p>
+        <p>Total Classes Held: <strong id="total-classes">0</strong></p>
+        <p>Overall Percentage: <strong id="overall-percentage">N/A</strong></p>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="attendanceChart"></canvas>
+      </div>
+
+      <div class="daily-diary-section">
+          <h3>Personal Daily Diary ✍️</h3>
+          <div class="daily-diary-controls">
+              <input type="date" id="diary-date-input">
+              <!-- Add navigation buttons if desired:
+              <button onclick="changeDiaryDate(-1)">◀ Prev</button>
+              <button onclick="changeDiaryDate(1)">Next ►</button>
+              -->
+          </div>
+          <textarea id="diary-entry-text" placeholder="Write your thoughts for today..."></textarea>
+          <button onclick="saveDiaryEntry()" class="success">Save Entry</button>
+          <p class="message" id="diary-message"></p>
+      </div>
+
+      <div id="meme-container">
+        <img id="meme" src="" alt="funny meme" />
+        <p id="meme-loading">Loading meme...</p>
+        <button onclick="fetchMeme()">Get New Meme</button>
+      </div>
+
+      <div class="footer">
+        Made with ☕ and 😂 by Indian Coders | #GenZ Edition
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+    const STORAGE_KEY_ALL_USER_DATA = 'attendanceApp_allUserData';
+    const STORAGE_KEY_CURRENT_USERNAME = 'attendanceApp_currentUsername';
+
+    let currentUsername = localStorage.getItem(STORAGE_KEY_CURRENT_USERNAME);
+    let allUserData = JSON.parse(localStorage.getItem(STORAGE_KEY_ALL_USER_DATA)) || {};
+
+    let currentUserData = {};
+    let chartInstance;
+
+    const defaultAttendanceStructure = {
+      Maths: { present: 0, absent: 0 },
+      Physics: { present: 0, absent: 0 },
+      DSA: { present: 0, absent: 0 },
+      EEE: { present: 0, absent: 0 }
+    };
+
+    const defaultUserConfig = {
+      password: '',
+      avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=default&size=80',
+      darkMode: false,
+      attendance: JSON.parse(JSON.stringify(defaultAttendanceStructure)), // Deep copy for new user
+      diaryEntries: {} // New: Store diary entries here
+    };
+
     const quotes = [
-      "Legends never dip below 75% 😎",
-      "Proxy is love, proxy is life 🧑‍🎓",
-      "Class toh bunk hui, but attendance full hai 🤫",
-      "Lag gaye! You're below 75% 😬",
-      "You're a 75% warrior 🛡️ Stay strong!",
-      "Bro... that proxy life catching up 😅",
-      "Attendance se yaari, grades mein baazi 💯"
-    ];
-    const memes = [
-      "When you attend just enough to hit 75% 🤏😂",
-      "Me: Attends class | Teacher: Who are you? 👀",
-      "Proxy gang be like: Avengers Assemble 🧙‍♂️",
-      "Attendance sheet = Roll call anxiety 😰",
-      "Bunk today, pray tomorrow 🙏",
-      "That one guy who attends all classes... are you okay bro? 🥲"
+      '"Late again? You’re on a roll! 😂"',
+      '"Every bunk writes a new legend." 😎',
+      '"Attendance is temporary. GPA is forever? 🤔"',
+      '"Just go to class... said no GenZ ever."',
+      '"Studied? Nah. Attended? Barely."',
+      '"My attendance is like my internet connection: unstable."',
+      '"I came, I saw, I forgot what I was here for."',
+      '"Sleeping in class counts as being present, right?"',
+      '"Woke up. Attended class. Still tired." 😴',
+      '"The only thing getting high is my number of absent lectures. 📈"'
     ];
 
-    const calendar = document.getElementById("calendar");
-    const quoteBox = document.getElementById("dailyQuote");
-    const memeBox = document.getElementById("dailyMeme");
+    const avatarOptions = [
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Annie&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Chloe&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Leo&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Lily&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Felix&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Jasper&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Kiki&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Gizmo&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Sam&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Pepper&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Midnight&size=80',
+      'https://api.dicebear.com/7.x/pixel-art/svg?seed=Buttercup&size=80'
+    ];
 
-    // Set daily content
-    quoteBox.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-    memeBox.innerText = memes[Math.floor(Math.random() * memes.length)];
+    function showPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(page => {
+        page.classList.remove('active');
+      });
+      document.getElementById(pageId).classList.add('active');
+    }
 
-    for(let i = 1; i <= 30; i++) {
-      const day = document.createElement("div");
-      day.classList.add("day");
-      day.innerText = i;
-      day.addEventListener("click", () => {
-        if(day.classList.contains("present")) {
-          day.classList.remove("present");
-          day.classList.add("absent");
-          day.innerText = `🔴 ${i}`;
-        } else if(day.classList.contains("absent")) {
-          day.classList.remove("absent");
-          day.classList.add("holiday");
-          day.innerText = `🏖️ ${i}`;
-        } else if(day.classList.contains("holiday")) {
-          day.classList.remove("holiday");
-          day.innerText = `${i}`;
-        } else {
-          day.classList.add("present");
-          day.innerText = `🟢 ${i}`;
+    function showMessage(elementId, message, type) {
+      const el = document.getElementById(elementId);
+      el.textContent = message;
+      el.className = `message ${type}`;
+      el.style.display = 'block';
+      setTimeout(() => {
+        el.textContent = '';
+        el.className = 'message';
+        el.style.display = 'none';
+      }, 3000);
+    }
+
+    // --- Core Data Persistence Functions ---
+    function saveAllUserData() {
+        localStorage.setItem(STORAGE_KEY_ALL_USER_DATA, JSON.stringify(allUserData));
+    }
+
+    function saveCurrentUserData() {
+      if (currentUsername && allUserData[currentUsername]) {
+        // Ensure that any newly added default properties exist on existing users' data
+        allUserData[currentUsername] = { ...defaultUserConfig, ...allUserData[currentUsername] };
+        // Now safely assign the current session data
+        allUserData[currentUsername].attendance = currentUserData.attendance;
+        allUserData[currentUsername].avatar = currentUserData.avatar;
+        allUserData[currentUsername].darkMode = currentUserData.darkMode;
+        allUserData[currentUsername].diaryEntries = currentUserData.diaryEntries; // Save diary entries
+        saveAllUserData();
+      }
+    }
+
+    function loadCurrentUserData() {
+      if (currentUsername && allUserData[currentUsername]) {
+        currentUserData = allUserData[currentUsername];
+        // Ensure that newly introduced fields like diaryEntries exist for existing users
+        if (!currentUserData.diaryEntries) {
+            currentUserData.diaryEntries = {};
+        }
+        if (!currentUserData.attendance) { // Ensure attendance exists
+            currentUserData.attendance = JSON.parse(JSON.stringify(defaultAttendanceStructure));
+        }
+        // Ensure other optional properties like darkMode are initialized
+        if (currentUserData.darkMode === undefined) {
+            currentUserData.darkMode = defaultUserConfig.darkMode;
+        }
+
+      } else {
+        currentUserData = JSON.parse(JSON.stringify(defaultUserConfig));
+        console.warn("Attempted to load data for non-existent current user or missing data. Using default config.");
+      }
+      applyDarkModePreference(); // Apply the loaded dark mode setting
+    }
+
+    // --- Authentication Functions ---
+    function handleLogin() {
+      const usernameInput = document.getElementById('auth-username').value.trim();
+      const passwordInput = document.getElementById('auth-password').value.trim();
+      const authError = document.getElementById('auth-error');
+
+      if (!usernameInput || !passwordInput) {
+        showMessage('auth-error', 'Please enter both username and password.', 'error');
+        return;
+      }
+
+      if (allUserData[usernameInput] && allUserData[usernameInput].password === passwordInput) {
+        currentUsername = usernameInput;
+        localStorage.setItem(STORAGE_KEY_CURRENT_USERNAME, currentUsername);
+        loadCurrentUserData();
+        authError.textContent = '';
+        initDashboardOrAvatarSelection();
+      } else {
+        showMessage('auth-error', 'Invalid username or password.', 'error');
+      }
+    }
+
+    function handleRegister() {
+      const usernameInput = document.getElementById('auth-username').value.trim();
+      const passwordInput = document.getElementById('auth-password').value.trim();
+      const authError = document.getElementById('auth-error');
+
+      if (!usernameInput || !passwordInput) {
+        showMessage('auth-error', 'Please enter both username and password.', 'error');
+        return;
+      }
+      if (usernameInput.length < 3 || passwordInput.length < 3) {
+        showMessage('auth-error', 'Username and password must be at least 3 characters long.', 'error');
+        return;
+      }
+
+      if (allUserData[usernameInput]) {
+        showMessage('auth-error', 'Username already exists. Please choose a different one or login.', 'error');
+        return;
+      }
+
+      allUserData[usernameInput] = JSON.parse(JSON.stringify(defaultUserConfig));
+      allUserData[usernameInput].password = passwordInput;
+      saveAllUserData();
+
+      currentUsername = usernameInput;
+      localStorage.setItem(STORAGE_KEY_CURRENT_USERNAME, currentUsername);
+      loadCurrentUserData();
+      showMessage('auth-error', 'Registration successful! You are now logged in.', 'success');
+      setTimeout(() => initDashboardOrAvatarSelection(), 1500);
+    }
+
+    function logout() {
+      currentUsername = null;
+      localStorage.removeItem(STORAGE_KEY_CURRENT_USERNAME);
+      currentUserData = {};
+      if (chartInstance) {
+          chartInstance.destroy();
+      }
+      document.getElementById('auth-username').value = '';
+      document.getElementById('auth-password').value = '';
+      document.getElementById('auth-error').textContent = '';
+      showPage('auth-page');
+    }
+
+    // --- Avatar Selection Functions ---
+    function renderAvatarOptions() {
+      const avatarGrid = document.getElementById('avatar-options');
+      avatarGrid.innerHTML = '';
+      avatarOptions.forEach(avatarSrc => {
+        const div = document.createElement('div');
+        div.classList.add('avatar-option');
+        if (currentUserData.avatar === avatarSrc) {
+          div.classList.add('selected');
+        }
+        div.innerHTML = `<img src="${avatarSrc}" alt="Avatar">`;
+        div.onclick = () => selectAvatarOption(avatarSrc, div);
+        avatarGrid.appendChild(div);
+      });
+    }
+
+    function selectAvatarOption(avatarSrc, element) {
+      document.querySelectorAll('.avatar-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      currentUserData.avatar = avatarSrc;
+    }
+
+    function saveAvatar() {
+      if (currentUserData.avatar && currentUserData.avatar !== defaultUserConfig.avatar) {
+        saveCurrentUserData();
+        updateDashboardHeader();
+        showPage('dashboard-page');
+        renderSubjectCards(); // Render subjects first
+        renderOverallAttendance(); // Calculate and show overall attendance
+        initializeChart();
+        randomQuote();
+        fetchMeme();
+        initializeDiarySection(); // Initialize diary after logging in
+      } else {
+        alert('Please select an avatar!');
+      }
+    }
+
+    // --- Dashboard UI Updates & Functionality ---
+    function updateDashboardHeader() {
+      document.getElementById('display-username').textContent = currentUsername || 'Guest';
+      const userAvatarDisplay = document.getElementById('user-avatar-display');
+      userAvatarDisplay.src = currentUserData.avatar || defaultUserConfig.avatar;
+      userAvatarDisplay.alt = `${currentUsername}'s avatar`;
+    }
+
+    function initializeChart() {
+      const ctx = document.getElementById('attendanceChart').getContext('2d');
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const presentColor = getComputedStyle(document.documentElement).getPropertyValue('--button-primary-light').trim();
+      const absentColor = getComputedStyle(document.documentElement).getPropertyValue('--button-danger').trim();
+      const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim();
+      const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim().replace(')', ', 0.1)');
+
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(currentUserData.attendance),
+          datasets: [
+            {
+              label: 'Present',
+              data: Object.values(currentUserData.attendance).map(s => s.present),
+              backgroundColor: presentColor.replace(')', ', 0.8)'),
+              borderColor: presentColor,
+              borderWidth: 1
+            },
+            {
+              label: 'Absent',
+              data: Object.values(currentUserData.attendance).map(s => s.absent),
+              backgroundColor: absentColor.replace(')', ', 0.8)'),
+              borderColor: absentColor,
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: textColor,
+              }
+            },
+            title: {
+              display: true,
+              text: 'Attendance Overview 📊',
+              font: {
+                size: 18,
+                weight: 'bold'
+              },
+              color: textColor,
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: gridColor
+              },
+              ticks: {
+                color: textColor,
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: gridColor
+              },
+              ticks: {
+                stepSize: 1,
+                color: textColor,
+              }
+            }
+          }
         }
       });
-      calendar.appendChild(day);
+    }
+
+    function updateChart() {
+      if (chartInstance) {
+        chartInstance.data.datasets[0].data = Object.values(currentUserData.attendance).map(s => s.present);
+        chartInstance.data.datasets[1].data = Object.values(currentUserData.attendance).map(s => s.absent);
+        chartInstance.update();
+        saveCurrentUserData();
+      } else {
+          initializeChart(); // Initialize if not already
+      }
+    }
+
+    function markAttendance(subject, type) {
+      if (currentUserData.attendance && currentUserData.attendance[subject]) {
+        if (type === 'present') {
+          currentUserData.attendance[subject].present++;
+        } else if (type === 'absent') {
+          currentUserData.attendance[subject].absent++;
+        }
+        saveCurrentUserData(); // Save before rendering new data
+        renderSubjectCards(); // Re-render individual card with updated percentages
+        renderOverallAttendance(); // Update overall summary
+        updateChart(); // Just update chart data
+        randomQuote();
+      } else {
+        console.error(`Attendance data for subject '${subject}' is missing for current user.`);
+      }
+    }
+
+    function randomQuote() {
+      document.getElementById('fun-quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    async function fetchMeme() {
+      const memeImg = document.getElementById('meme');
+      const memeLoading = document.getElementById('meme-loading');
+      memeImg.style.display = 'none';
+      memeLoading.style.display = 'block';
+      memeLoading.textContent = 'Loading meme...';
+
+      try {
+        const response = await fetch('https://meme-api.com/gimme');
+        const data = await response.json();
+        memeImg.src = data.url;
+        memeImg.onload = () => {
+          memeImg.style.display = 'block';
+          memeLoading.style.display = 'none';
+        };
+        memeImg.onerror = () => {
+            memeImg.style.display = 'none';
+            memeLoading.textContent = 'Failed to load meme.';
+        };
+      } catch (error) {
+        console.error('Error fetching meme:', error);
+        memeImg.style.display = 'none';
+        memeLoading.textContent = 'Failed to load meme.';
+      }
     }
 
     function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
+      currentUserData.darkMode = !currentUserData.darkMode;
+      applyDarkModePreference();
+      saveCurrentUserData();
+      initializeChart(); // Re-initialize chart to apply new theme colors and axis colors
     }
 
-    function shareToStory() {
-      alert("📸 Feature coming soon! Save this as screenshot and share on IG story with #AttendanceIsLife 🧑‍🎓");
+    function applyDarkModePreference() {
+      if (currentUserData.darkMode) {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
     }
+
+    // --- Subject Management Functions ---
+
+    function calculateAttendancePercentage(present, total) {
+      if (total === 0) {
+        return 'N/A';
+      }
+      return ((present / total) * 100).toFixed(0) + '%';
+    }
+
+    function renderSubjectCards() {
+      const subjectsListDiv = document.getElementById('subjects-list');
+      subjectsListDiv.innerHTML = '';
+
+      const subjectNames = Object.keys(currentUserData.attendance);
+      if (subjectNames.length === 0) {
+        subjectsListDiv.innerHTML = '<p style="text-align: center; margin-top: 20px; opacity: 0.8; color: var(--text-light); transition: color 0.3s ease;">No subjects added yet. Add some above!</p>';
+      }
+
+      subjectNames.forEach(subjectName => {
+        const subjectData = currentUserData.attendance[subjectName];
+        const totalClasses = subjectData.present + subjectData.absent;
+        const percentage = calculateAttendancePercentage(subjectData.present, totalClasses);
+
+        const card = document.createElement('div');
+        card.classList.add('subject-card');
+        card.dataset.subject = subjectName;
+
+        card.innerHTML = `
+          <div class="subject-info">
+            <span class="subject-name-display">${subjectName}</span>
+            <span class="attendance-percentage">Attendance: ${percentage} (${subjectData.present}/${totalClasses})</span>
+          </div>
+          <input type="text" class="edit-subject-input" value="${subjectName}" style="display: none;">
+          <div class="actions">
+            <button onclick="markAttendance('${subjectName}', 'present')" class="mark-button present-btn">Present</button>
+            <button onclick="markAttendance('${subjectName}', 'absent')" class="mark-button absent-btn">Absent</button>
+            <button onclick="startEditSubject(this, '${subjectName}')" class="edit-button">Edit</button>
+            <button onclick="deleteSubject('${subjectName}')" class="danger delete-button">Delete</button>
+            <button onclick="saveEditSubject(this, '${subjectName}')" class="success save-edit-button" style="display: none;">Save</button>
+            <button onclick="cancelEditSubject(this)" class="danger cancel-edit-button" style="display: none;">Cancel</button>
+          </div>
+        `;
+        subjectsListDiv.appendChild(card);
+      });
+      initializeChart(); // Re-initialize chart because labels might change
+    }
+
+    function addSubject() {
+      const newSubjectNameInput = document.getElementById('new-subject-name');
+      let newSubjectName = newSubjectNameInput.value.trim();
+      const subjectManageMessage = document.getElementById('subject-manage-message');
+
+      if (!newSubjectName) {
+        showMessage('subject-manage-message', 'Subject name cannot be empty.', 'error');
+        return;
+      }
+
+      newSubjectName = newSubjectName.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+      if (!newSubjectName) {
+         showMessage('subject-manage-message', 'Invalid subject name after cleanup. Please use letters and numbers.', 'error');
+         return;
+      }
+      newSubjectName = newSubjectName.charAt(0).toUpperCase() + newSubjectName.slice(1);
+
+      if (currentUserData.attendance.hasOwnProperty(newSubjectName)) {
+        showMessage('subject-manage-message', `Subject "${newSubjectName}" already exists.`, 'error');
+        return;
+      }
+
+      currentUserData.attendance[newSubjectName] = { present: 0, absent: 0 };
+      saveCurrentUserData();
+      renderSubjectCards();
+      renderOverallAttendance(); // Update overall summary as subjects change
+      showMessage('subject-manage-message', `Subject "${newSubjectName}" added successfully!`, 'success');
+      newSubjectNameInput.value = '';
+    }
+
+    function deleteSubject(subjectName) {
+      if (Object.keys(currentUserData.attendance).length <= 1) { // Changed to <=1 to prevent deleting the *very last* subject
+        showMessage('subject-manage-message', 'Cannot delete the last subject. Add another first!', 'error');
+        return;
+      }
+      if (confirm(`Are you sure you want to delete the subject "${subjectName}"? This cannot be undone.`)) {
+        delete currentUserData.attendance[subjectName];
+        saveCurrentUserData();
+        renderSubjectCards(); // This calls initializeChart() implicitly
+        renderOverallAttendance(); // Update overall summary
+        showMessage('subject-manage-message', `Subject "${subjectName}" deleted successfully.`, 'success');
+      }
+    }
+
+    function startEditSubject(buttonElement, originalSubjectName) {
+      const card = buttonElement.closest('.subject-card');
+      const subjectDisplay = card.querySelector('.subject-name-display');
+      const attendanceDisplay = card.querySelector('.attendance-percentage'); // Hide percentage too
+      const editInput = card.querySelector('.edit-subject-input');
+      const markButtons = card.querySelectorAll('.mark-button');
+      const editButton = card.querySelector('.edit-button');
+      const deleteButton = card.querySelector('.delete-button');
+      const saveEditButton = card.querySelector('.save-edit-button');
+      const cancelEditButton = card.querySelector('.cancel-edit-button');
+
+      subjectDisplay.style.display = 'none';
+      attendanceDisplay.style.display = 'none';
+      editInput.style.display = 'block';
+      editInput.value = originalSubjectName;
+
+      markButtons.forEach(btn => btn.style.display = 'none');
+      editButton.style.display = 'none';
+      deleteButton.style.display = 'none';
+
+      saveEditButton.style.display = 'block';
+      cancelEditButton.style.display = 'block';
+
+      editInput.focus();
+    }
+
+    function saveEditSubject(buttonElement, originalSubjectName) {
+      const card = buttonElement.closest('.subject-card');
+      const editInput = card.querySelector('.edit-subject-input');
+      let newSubjectName = editInput.value.trim();
+      const subjectManageMessage = document.getElementById('subject-manage-message');
+
+      if (!newSubjectName) {
+        showMessage('subject-manage-message', 'Subject name cannot be empty.', 'error');
+        editInput.focus();
+        return;
+      }
+      newSubjectName = newSubjectName.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+      if (!newSubjectName) {
+         showMessage('subject-manage-message', 'Invalid subject name after cleanup. Please use letters and numbers.', 'error');
+         editInput.focus();
+         return;
+      }
+      newSubjectName = newSubjectName.charAt(0).toUpperCase() + newSubjectName.slice(1);
+
+      if (newSubjectName === originalSubjectName) {
+        showMessage('subject-manage-message', 'No change detected in subject name.', 'success');
+        renderSubjectCards();
+        return;
+      }
+
+      if (currentUserData.attendance.hasOwnProperty(newSubjectName)) {
+        showMessage('subject-manage-message', `Subject "${newSubjectName}" already exists. Please choose a different name.`, 'error');
+        editInput.focus();
+        return;
+      }
+
+      const tempAttendance = {};
+      for (const key in currentUserData.attendance) {
+        if (key === originalSubjectName) {
+          tempAttendance[newSubjectName] = currentUserData.attendance[key];
+        } else {
+          tempAttendance[key] = currentUserData.attendance[key];
+        }
+      }
+      currentUserData.attendance = tempAttendance;
+      saveCurrentUserData();
+      renderSubjectCards(); // Re-render all cards with updated names and update chart
+      renderOverallAttendance(); // Update overall summary
+      showMessage('subject-manage-message', `Subject "${originalSubjectName}" renamed to "${newSubjectName}" successfully.`, 'success');
+    }
+
+    function cancelEditSubject(buttonElement) {
+      renderSubjectCards();
+    }
+
+    function renderOverallAttendance() {
+        let totalPresent = 0;
+        let totalAbsent = 0;
+
+        for (const subject in currentUserData.attendance) {
+            totalPresent += currentUserData.attendance[subject].present;
+            totalAbsent += currentUserData.attendance[subject].absent;
+        }
+
+        const totalClassesHeld = totalPresent + totalAbsent;
+        const overallPercentage = calculateAttendancePercentage(totalPresent, totalClassesHeld);
+
+        document.getElementById('total-present').textContent = totalPresent;
+        document.getElementById('total-classes').textContent = totalClassesHeld;
+        document.getElementById('overall-percentage').textContent = overallPercentage;
+    }
+
+    // --- Daily Diary Functions ---
+    function getTodayDateString() {
+      const today = new Date();
+      return today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+    }
+
+    function initializeDiarySection() {
+        const diaryDateInput = document.getElementById('diary-date-input');
+        const diaryEntryTextarea = document.getElementById('diary-entry-text');
+
+        // Set date input to today's date by default
+        diaryDateInput.value = getTodayDateString();
+
+        // Load today's entry on init
+        loadDiaryEntry(diaryDateInput.value);
+
+        // Add event listener for date input changes
+        diaryDateInput.addEventListener('change', (event) => {
+            loadDiaryEntry(event.target.value);
+        });
+    }
+
+    function loadDiaryEntry(date) {
+        const diaryEntryTextarea = document.getElementById('diary-entry-text');
+        if (currentUserData.diaryEntries && currentUserData.diaryEntries[date]) {
+            diaryEntryTextarea.value = currentUserData.diaryEntries[date];
+        } else {
+            diaryEntryTextarea.value = '';
+        }
+    }
+
+    function saveDiaryEntry() {
+        const diaryDateInput = document.getElementById('diary-date-input');
+        const diaryEntryTextarea = document.getElementById('diary-entry-text');
+        const diaryMessage = document.getElementById('diary-message');
+
+        const date = diaryDateInput.value;
+        const entryText = diaryEntryTextarea.value.trim();
+
+        if (!date) {
+            showMessage('diary-message', 'Please select a date for your diary entry.', 'error');
+            return;
+        }
+
+        // Initialize diaryEntries if it doesn't exist
+        if (!currentUserData.diaryEntries) {
+            currentUserData.diaryEntries = {};
+        }
+
+        if (entryText) {
+            currentUserData.diaryEntries[date] = entryText;
+            showMessage('diary-message', `Diary entry for ${date} saved!`, 'success');
+        } else {
+            // If entry text is empty, remove the entry for that date
+            if (currentUserData.diaryEntries[date]) {
+                delete currentUserData.diaryEntries[date];
+                showMessage('diary-message', `Diary entry for ${date} cleared.`, 'success');
+            } else {
+                showMessage('diary-message', 'Diary entry is empty. Nothing to save.', 'error');
+                return;
+            }
+        }
+        saveCurrentUserData();
+    }
+
+
+    // --- Initialization Logic ---
+    function initDashboardOrAvatarSelection() {
+        if (!currentUserData.avatar || currentUserData.avatar === defaultUserConfig.avatar) {
+            renderAvatarOptions();
+            showPage('avatar-selection-page');
+        } else {
+            updateDashboardHeader();
+            showPage('dashboard-page');
+            renderSubjectCards();
+            renderOverallAttendance();
+            initializeChart();
+            randomQuote();
+            fetchMeme();
+            initializeDiarySection();
+        }
+    }
+
+    function initApp() {
+        if (currentUsername) {
+            loadCurrentUserData();
+            initDashboardOrAvatarSelection();
+        } else {
+            showPage('auth-page');
+        }
+    }
+
+    // Initialize the app when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
